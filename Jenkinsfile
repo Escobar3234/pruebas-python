@@ -21,3 +21,4 @@ pipeline {
             junit 'results.xml'
         }
     }
+}
