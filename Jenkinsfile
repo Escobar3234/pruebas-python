@@ -7,17 +7,30 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/Escobar3234/pruebas-python.git'
             }
         }
+
+        stage('Install dependencies') {
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install pytest
+                '''
+            }
+        }
+
         stage('Test') {
             steps {
-                // Ejecuta pytest y genera reporte JUnit
-                sh 'pytest --maxfail=1 --disable-warnings -q --junitxml=results.xml'
+                sh '''
+                    . venv/bin/activate
+                    pytest --maxfail=1 --disable-warnings -q --junitxml=results.xml
+                '''
             }
         }
     }
 
     post {
         always {
-            // Publica el reporte en la interfaz de Jenkins
             junit 'results.xml'
         }
     }
